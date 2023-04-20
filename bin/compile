@@ -1,0 +1,19 @@
+#!/bin/sh
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+STRACE_VERSION="5.14"
+
+echo "-----> Installing strace $STRACE_VERSION"
+
+# Download and extract strace
+curl -sL "https://github.com/strace/strace/releases/download/v${STRACE_VERSION}/strace-${STRACE_VERSION}.tar.xz" | tar xJ -C /tmp
+
+# Compile strace
+cd "/tmp/strace-${STRACE_VERSION}"
+./configure --prefix="$BUILD_DIR/.heroku/strace"
+make && make install
+
+# Add strace binary to the PATH
+echo "-----> Adding strace to the PATH"
+echo "export PATH=\"\$PATH:$BUILD_DIR/.heroku/strace/bin\"" >> "$BUILD_DIR/.profile.d/strace.sh"
